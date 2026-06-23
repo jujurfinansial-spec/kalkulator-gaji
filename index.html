@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Alokasi Gaji — Belajar Kaya</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f5;
+    --bg3: #f0efe9;
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #9b9b96;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --purple-light: #EEEDFE;
+    --purple-mid: #7F77DD;
+    --purple-dark: #3C3489;
+    --purple-border: #AFA9EC;
+    --green-light: #EAF3DE;
+    --green-dark: #3B6D11;
+    --green-border: #97C459;
+    --amber-light: #FAEEDA;
+    --amber-dark: #854F0B;
+    --amber-border: #EF9F27;
+    --red-light: #FCEBEB;
+    --red-dark: #A32D2D;
+    --red-border: #F09595;
+    --coral-light: #FAECE7;
+    --coral-dark: #993C1D;
+    --coral-border: #F0997B;
+    --blue: #378ADD;
+    --teal: #1D9E75;
+    --amber-bar: #BA7517;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c;
+      --bg2: #2a2a27;
+      --bg3: #232320;
+      --text: #f0efe9;
+      --text2: #a0a09a;
+      --text3: #6b6b67;
+      --border: rgba(255,255,255,0.10);
+      --border2: rgba(255,255,255,0.20);
+      --purple-light: #26215C;
+      --purple-mid: #7F77DD;
+      --purple-dark: #CECBF6;
+      --purple-border: #534AB7;
+      --green-light: #173404;
+      --green-dark: #C0DD97;
+      --green-border: #3B6D11;
+      --amber-light: #412402;
+      --amber-dark: #FAC775;
+      --amber-border: #854F0B;
+      --red-light: #501313;
+      --red-dark: #F7C1C1;
+      --red-border: #A32D2D;
+      --coral-light: #4A1B0C;
+      --coral-dark: #F5C4B3;
+      --coral-border: #993C1D;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg3);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 1.5rem 1.5rem;
+    background: var(--bg);
+    border-radius: var(--radius-xl);
+    border: 0.5px solid var(--border);
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  /* SECTIONS */
+  .section {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title svg { opacity: .6; flex-shrink: 0; }
+
+  /* ROWS */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .row-label { flex: 1; min-width: 0; }
+  .row-label span { font-size: 14px; color: var(--text); display: block; }
+  .row-label small { font-size: 12px; color: var(--text3); }
+
+  /* INPUTS */
+  .input-wrap { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .prefix { font-size: 13px; color: var(--text2); white-space: nowrap; }
+  input[type="number"], input[type="text"] {
+    width: 148px;
+    padding: 7px 10px;
+    font-size: 14px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-md);
+    background: var(--bg2);
+    color: var(--text);
+    text-align: right;
+    transition: border-color .15s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--purple-mid);
+  }
+  input.label-input {
+    flex: 1;
+    width: auto;
+    text-align: left;
+    padding: 7px 10px;
+  }
+
+  /* SLIDER */
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .slider-row label { font-size: 13px; color: var(--text2); flex: 0 0 140px; }
+  input[type="range"] {
+    flex: 1;
+    height: 4px;
+    accent-color: var(--purple-mid);
+    cursor: pointer;
+  }
+  .slider-val { font-size: 14px; font-weight: 600; color: var(--text); min-width: 38px; text-align: right; }
+
+  /* METRICS */
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .metric {
+    background: var(--bg2);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+  }
+  .metric-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .metric-value { font-size: 19px; font-weight: 600; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    text-align: left;
+    padding: 0 8px 8px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  thead th:last-child { text-align: right; padding-right: 0; }
+  tbody td {
+    font-size: 14px;
+    color: var(--text);
+    padding: 9px 8px 9px 0;
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody td:last-child { text-align: right; padding-right: 0; font-weight: 500; }
+  tbody tr:last-child td { border-bottom: none; }
+  .bar { height: 6px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 8px; opacity: .7; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+  }
+  .badge-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .badge-green  { background: var(--green-light);  color: var(--green-dark); }
+  .badge-amber  { background: var(--amber-light);  color: var(--amber-dark); }
+  .badge-red    { background: var(--red-light);    color: var(--red-dark); }
+
+  /* PYF BOX */
+  .pyf-box {
+    background: var(--purple-light);
+    border: 0.5px solid var(--purple-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+  .pyf-label { font-size: 12px; font-weight: 600; color: var(--purple-mid); margin-bottom: 6px; }
+  .pyf-amount { font-size: 30px; font-weight: 700; color: var(--purple-dark); }
+  .pyf-desc { font-size: 12px; color: var(--purple-mid); margin-top: 4px; line-height: 1.5; }
+
+  /* VERDICT */
+  .verdict { border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-top: 1rem; }
+  .verdict-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .verdict-body { font-size: 13px; line-height: 1.6; }
+
+  /* COMMITMENT */
+  .commitment {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+  .commitment p { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 1.5rem; }
+  .commitment strong { color: var(--text); }
+  .sign-line {
+    border-top: 0.5px solid var(--border2);
+    padding-top: 8px;
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    gap: 2rem;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1.25rem;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .footer a { color: var(--purple-mid); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  /* ADD / REMOVE BUTTONS */
+  .add-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    background: transparent;
+    border: 0.5px dashed var(--border2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .add-btn:hover { background: var(--bg2); }
+  .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: var(--text3);
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: background .12s, color .12s;
+  }
+  .remove-btn:hover { background: var(--bg2); color: var(--text); }
+
+  .total-row td { font-weight: 600; }
+  .total-row td { padding-top: 12px !important; border-top: 0.5px solid var(--border2) !important; }
+
+  @media (max-width: 480px) {
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .metrics .metric:last-child { grid-column: span 2; }
+    input[type="number"] { width: 120px; }
+    .header h1 { font-size: 20px; }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .section { break-inside: avoid; }
+    .add-btn, .remove-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <p class="header-eyebrow">Belajar Kaya · Worksheet Finansial</p>
+    <h1>Kalkulator Alokasi Gaji<br>untuk Tulang Punggung Keluarga</h1>
+    <p>Masukkan angka di bawah — hasil alokasi muncul otomatis.</p>
+  </div>
+
+  <!-- PENGHASILAN -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      Penghasilan bulanan
+    </div>
+    <div class="row">
+      <div class="row-label">
+        <span>Gaji pokok / take-home pay</span>
+        <small>Setelah potongan pajak &amp; BPJS</small>
+      </div>
+      <div class="input-wrap">
+        <span class="prefix">Rp</span>
+        <input type="number" id="gaji" value="5000000" min="0" step="100000">
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-label">
+        <span>Penghasilan tambahan (opsional)</span>
+        <small>Freelance, bisnis sampingan, dll.</small>
+      </div>
+      <div class="input-wrap">
+        <span class="prefix">Rp</span>
+        <input type="number" id="tambahan" value="0" min="0" step="100000">
+      </div>
+    </div>
+  </div>
+
+  <!-- FIXED -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Pengeluaran tetap (fixed)
+    </div>
+    <div id="fixed-list"></div>
+    <button class="add-btn" onclick="addFixed()">+ Tambah pos pengeluaran tetap</button>
+  </div>
+
+  <!-- VARIABEL -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Kebutuhan variabel bulanan
+    </div>
+    <div id="var-list"></div>
+    <button class="add-btn" onclick="addVar()">+ Tambah pos variabel</button>
+  </div>
+
+  <!-- SLIDER PYF -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Target Pay Yourself First (PYF)
+    </div>
+    <div class="slider-row">
+      <label for="pyf-slider">% PYF target</label>
+      <input type="range" id="pyf-slider" min="5" max="30" value="10" step="1" oninput="update()">
+      <span class="slider-val" id="pyf-pct">10%</span>
+    </div>
+    <p style="font-size:12px;color:var(--text3);">Rekomendasi minimum: 10% dari total penghasilan. Geser untuk lihat dampaknya.</p>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Total penghasilan</div>
+      <div class="metric-value" id="m-total">Rp 0</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Total pengeluaran</div>
+      <div class="metric-value" id="m-spend">Rp 0</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Sisa bersih</div>
+      <div class="metric-value" id="m-sisa">Rp 0</div>
+      <div class="metric-sub" id="m-sisa-pct">0% dari penghasilan</div>
+    </div>
+  </div>
+
+  <!-- ALLOC TABLE -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+      Rincian alokasi
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40%">Pos</th>
+          <th style="width:22%">Nominal</th>
+          <th style="width:10%">%</th>
+          <th style="width:28%;text-align:right">Status</th>
+        </tr>
+      </thead>
+      <tbody id="alloc-body"></tbody>
+    </table>
+
+    <div class="pyf-box">
+      <div class="pyf-label">🔒 Pay Yourself First — yang harus dikunci dulu</div>
+      <div class="pyf-amount" id="pyf-amount">Rp 0</div>
+      <div class="pyf-desc" id="pyf-desc">Pindahkan angka ini ke rekening terpisah di hari gajian, sebelum bayar apapun.</div>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict" id="verdict-box" style="background:var(--bg2);border:0.5px solid var(--border);">
+    <div class="verdict-title" id="verdict-title" style="color:var(--text)">Masukkan angka gaji dulu ya.</div>
+    <div class="verdict-body" id="verdict-body" style="color:var(--text2)"></div>
+  </div>
+
+  <!-- COMMITMENT -->
+  <div class="commitment">
+    <p>✍️ Saya berkomitmen mengunci <strong id="commit-amount">Rp —</strong> setiap bulan sebagai Pay Yourself First, dipindahkan ke rekening terpisah maksimal 24 jam setelah gajian.</p>
+    <div class="sign-line">
+      <span>Nama: ____________________________</span>
+      <span>Tanggal mulai: ___________</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Dibuat oleh <a href="https://www.youtube.com/@BelajarKaya" target="_blank">Belajar Kaya</a> · Gratis untuk viewers 🙌
+  </div>
+
+</div>
+
+<script>
+  const fmt = n => 'Rp\u00a0' + Math.round(n).toLocaleString('id-ID');
+  const fmtS = n => {
+    if (n >= 1e9) return 'Rp\u00a0' + (n/1e9).toFixed(1) + 'M';
+    if (n >= 1e6) return 'Rp\u00a0' + (n/1e6).toFixed(1) + ' jt';
+    return fmt(n);
+  };
+
+  let fixedItems = [
+    { label: 'Cicilan rumah / KPR / sewa', val: 1500000 },
+    { label: 'Cicilan kendaraan', val: 500000 },
+    { label: 'Tagihan listrik & air', val: 300000 },
+    { label: 'Pulsa & internet', val: 200000 },
+    { label: 'Premi asuransi', val: 150000 },
+    { label: 'Uang sekolah anak', val: 400000 },
+  ];
+  let varItems = [
+    { label: 'Bahan makanan & dapur', val: 700000 },
+    { label: 'Transportasi harian', val: 300000 },
+    { label: 'Kebutuhan anak & keluarga', val: 250000 },
+    { label: 'Makan di luar / jajan', val: 200000 },
+  ];
+
+  function renderList(items, containerId, type) {
+    const c = document.getElementById(containerId);
+    c.innerHTML = '';
+    items.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <input class="label-input" type="text" value="${item.label}" oninput="updateLabel('${type}',${i},this.value)" style="flex:1;min-width:0;width:auto;text-align:left;">
+        <div class="input-wrap">
+          <span class="prefix">Rp</span>
+          <input type="number" value="${item.val}" min="0" step="10000" oninput="updateVal('${type}',${i},this.value)">
+        </div>
+        <button class="remove-btn" onclick="removeItem('${type}',${i})" title="Hapus">×</button>`;
+      c.appendChild(row);
+    });
+  }
+
+  function updateLabel(type, i, v) {
+    if (type === 'fixed') fixedItems[i].label = v; else varItems[i].label = v;
+  }
+  function updateVal(type, i, v) {
+    const n = parseFloat(v) || 0;
+    if (type === 'fixed') fixedItems[i].val = n; else varItems[i].val = n;
+    update();
+  }
+  function removeItem(type, i) {
+    if (type === 'fixed') fixedItems.splice(i, 1); else varItems.splice(i, 1);
+    render(); update();
+  }
+  function addFixed() {
+    fixedItems.push({ label: 'Pengeluaran tetap baru', val: 0 });
+    render(); update();
+  }
+  function addVar() {
+    varItems.push({ label: 'Pengeluaran variabel baru', val: 0 });
+    render(); update();
+  }
+
+  function render() {
+    renderList(fixedItems, 'fixed-list', 'fixed');
+    renderList(varItems, 'var-list', 'var');
+  }
+
+  function update() {
+    const gaji = parseFloat(document.getElementById('gaji').value) || 0;
+    const tambahan = parseFloat(document.getElementById('tambahan').value) || 0;
+    const total = gaji + tambahan;
+    const pyfPct = parseInt(document.getElementById('pyf-slider').value);
+    document.getElementById('pyf-pct').textContent = pyfPct + '%';
+
+    const totalFixed = fixedItems.reduce((s, x) => s + x.val, 0);
+    const totalVar = varItems.reduce((s, x) => s + x.val, 0);
+    const totalSpend = totalFixed + totalVar;
+    const pyf = Math.round(total * pyfPct / 100);
+    const sisa = total - totalSpend - pyf;
+    const sisaPct = total > 0 ? Math.round((sisa / total) * 100) : 0;
+
+    document.getElementById('m-total').textContent = fmtS(total);
+    document.getElementById('m-spend').textContent = fmtS(totalSpend);
+    document.getElementById('m-sisa').textContent = fmtS(Math.max(0, sisa));
+    document.getElementById('m-sisa-pct').textContent = sisaPct + '% dari penghasilan';
+    document.getElementById('pyf-amount').textContent = fmt(pyf);
+    document.getElementById('commit-amount').textContent = fmt(pyf);
+    document.getElementById('pyf-desc').textContent =
+      'Pindahkan ' + fmt(pyf) + ' ke rekening terpisah di hari gajian, sebelum bayar apapun.';
+
+    const tbody = document.getElementById('alloc-body');
+    tbody.innerHTML = '';
+    const rows = [
+      { label: 'Pay Yourself First', nom: pyf,              color: '#7F77DD', badge: 'purple', bLabel: 'Dikunci' },
+      { label: 'Pengeluaran tetap',  nom: totalFixed,        color: '#378ADD', badge: 'green',  bLabel: 'Wajib' },
+      { label: 'Kebutuhan variabel', nom: totalVar,          color: '#1D9E75', badge: 'amber',  bLabel: 'Kebutuhan' },
+      { label: 'Dana fleksibel',     nom: Math.max(0, sisa), color: '#BA7517', badge: sisa >= 0 ? 'green' : 'red', bLabel: sisa >= 0 ? 'Surplus' : 'Defisit' },
+    ];
+    rows.forEach(r => {
+      const pct = total > 0 ? Math.round((r.nom / total) * 100) : 0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="bar" style="background:${r.color};width:${Math.min(pct * 1.4, 72)}px;"></span>${r.label}</td>
+        <td>${fmt(r.nom)}</td>
+        <td style="color:var(--text3)">${pct}%</td>
+        <td><span class="badge badge-${r.badge}">${r.bLabel}</span></td>`;
+      tbody.appendChild(tr);
+    });
+
+    const used = Math.round(pyf + totalSpend);
+    const usedPct = total > 0 ? Math.round((used / total) * 100) : 0;
+    const totalRow = document.createElement('tr');
+    totalRow.className = 'total-row';
+    totalRow.innerHTML = `
+      <td>Total terpakai</td>
+      <td>${fmt(used)}</td>
+      <td style="color:var(--text3)">${usedPct}%</td>
+      <td><span class="badge ${usedPct <= 100 ? 'badge-green' : 'badge-red'}">${usedPct <= 100 ? 'OK' : 'Over budget'}</span></td>`;
+    tbody.appendChild(totalRow);
+
+    // Verdict
+    const vbox = document.getElementById('verdict-box');
+    const vtitle = document.getElementById('verdict-title');
+    const vbody = document.getElementById('verdict-body');
+
+    if (total === 0) {
+      vbox.style.cssText = 'background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-top:1rem;';
+      vtitle.style.color = 'var(--text)';
+      vtitle.textContent = 'Masukkan angka gaji dulu ya.';
+      vbody.textContent = '';
+      return;
+    }
+    if (sisa < 0) {
+      vbox.style.cssText = 'background:var(--red-light);border:0.5px solid var(--red-border);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;';
+      vtitle.style.color = 'var(--red-dark)'; vtitle.textContent = '⚠️ Pengeluaranmu melebihi penghasilan';
+      vbody.style.color = 'var(--coral-dark)';
+      vbody.textContent = `Kekurangan ${fmt(Math.abs(sisa))} per bulan. Prioritas pertama: cari pengeluaran tetap yang bisa dipotong. Jangan kurangi PYF — justru ini yang menyelamatkan keuanganmu jangka panjang.`;
+    } else if (sisaPct >= 20) {
+      vbox.style.cssText = 'background:var(--green-light);border:0.5px solid var(--green-border);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;';
+      vtitle.style.color = 'var(--green-dark)'; vtitle.textContent = '✅ Kondisi keuanganmu sehat';
+      vbody.style.color = 'var(--green-dark)';
+      vbody.textContent = `Sisa ${fmt(sisa)} (${sisaPct}%) masih cukup besar. Pertimbangkan naikkan PYF sampai 15–20%, atau alokasikan sisanya ke dana darurat sampai 3–6× pengeluaran bulanan.`;
+    } else if (sisaPct >= 5) {
+      vbox.style.cssText = 'background:var(--amber-light);border:0.5px solid var(--amber-border);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;';
+      vtitle.style.color = 'var(--amber-dark)'; vtitle.textContent = '🟡 Cukup ketat, tapi masih aman';
+      vbody.style.color = 'var(--amber-dark)';
+      vbody.textContent = `Sisa ${fmt(sisa)} (${sisaPct}%). Kondisi masih aman tapi rentan. Fokus tingkatkan penghasilan atau kurangi pengeluaran variabel. Jangan gunakan sisa ini untuk konsumtif.`;
+    } else {
+      vbox.style.cssText = 'background:var(--coral-light);border:0.5px solid var(--coral-border);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;';
+      vtitle.style.color = 'var(--coral-dark)'; vtitle.textContent = '🔴 Ruang gerak sangat sempit';
+      vbody.style.color = 'var(--coral-dark)';
+      vbody.textContent = `Sisa hanya ${fmt(Math.max(0,sisa))} (${sisaPct}%). Tidak ada buffer kalau ada pengeluaran tak terduga. Audit ulang semua pos — mana yang bisa ditunda atau diperkecil sementara.`;
+    }
+  }
+
+  document.getElementById('gaji').addEventListener('input', update);
+  document.getElementById('tambahan').addEventListener('input', update);
+
+  render();
+  update();
+</script>
+</body>
+</html>
