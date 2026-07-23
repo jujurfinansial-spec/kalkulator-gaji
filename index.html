@@ -19,10 +19,10 @@
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
-    --purple-light: #EEEDFE;
-    --purple-mid: #7F77DD;
-    --purple-dark: #3C3489;
-    --purple-border: #AFA9EC;
+    --emerald-light: #E3F2ED;
+    --emerald-mid: #0B5C4E;
+    --emerald-dark: #073D34;
+    --emerald-border: #86BFAE;
     --green-light: #EAF3DE;
     --green-dark: #3B6D11;
     --green-border: #97C459;
@@ -51,10 +51,10 @@
       --text3: #6b6b67;
       --border: rgba(255,255,255,0.10);
       --border2: rgba(255,255,255,0.20);
-      --purple-light: #26215C;
-      --purple-mid: #7F77DD;
-      --purple-dark: #CECBF6;
-      --purple-border: #534AB7;
+      --emerald-light: #0E2621;
+      --emerald-mid: #2FAF8F;
+      --emerald-dark: #A8E0CF;
+      --emerald-border: #1F7A64;
       --green-light: #173404;
       --green-dark: #C0DD97;
       --green-border: #3B6D11;
@@ -166,7 +166,7 @@
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   input[type="number"]:focus, input[type="text"]:focus {
     outline: none;
-    border-color: var(--purple-mid);
+    border-color: var(--emerald-mid);
   }
   input.label-input {
     flex: 1;
@@ -181,7 +181,7 @@
   input[type="range"] {
     flex: 1;
     height: 4px;
-    accent-color: var(--purple-mid);
+    accent-color: var(--emerald-mid);
     cursor: pointer;
   }
   .slider-val { font-size: 14px; font-weight: 600; color: var(--text); min-width: 38px; text-align: right; }
@@ -228,22 +228,22 @@
     border-radius: var(--radius-md);
     white-space: nowrap;
   }
-  .badge-purple { background: var(--purple-light); color: var(--purple-dark); }
+  .badge-emerald { background: var(--emerald-light); color: var(--emerald-dark); }
   .badge-green  { background: var(--green-light);  color: var(--green-dark); }
   .badge-amber  { background: var(--amber-light);  color: var(--amber-dark); }
   .badge-red    { background: var(--red-light);    color: var(--red-dark); }
 
   /* PYF BOX */
   .pyf-box {
-    background: var(--purple-light);
-    border: 0.5px solid var(--purple-border);
+    background: var(--emerald-light);
+    border: 0.5px solid var(--emerald-border);
     border-radius: var(--radius-lg);
     padding: 1.25rem;
     margin-top: 1rem;
   }
-  .pyf-label { font-size: 12px; font-weight: 600; color: var(--purple-mid); margin-bottom: 6px; }
-  .pyf-amount { font-size: 30px; font-weight: 700; color: var(--purple-dark); }
-  .pyf-desc { font-size: 12px; color: var(--purple-mid); margin-top: 4px; line-height: 1.5; }
+  .pyf-label { font-size: 12px; font-weight: 600; color: var(--emerald-mid); margin-bottom: 6px; }
+  .pyf-amount { font-size: 30px; font-weight: 700; color: var(--emerald-dark); }
+  .pyf-desc { font-size: 12px; color: var(--emerald-mid); margin-top: 4px; line-height: 1.5; }
 
   /* VERDICT */
   .verdict { border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-top: 1rem; }
@@ -277,7 +277,7 @@
     font-size: 12px;
     color: var(--text3);
   }
-  .footer a { color: var(--purple-mid); text-decoration: none; }
+  .footer a { color: var(--emerald-mid); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
 
   /* ADD / REMOVE BUTTONS */
@@ -592,7 +592,7 @@
     const tbody = document.getElementById('alloc-body');
     tbody.innerHTML = '';
     const rows = [
-      { label: 'Pay Yourself First', nom: pyf,              color: '#7F77DD', badge: 'purple', bLabel: 'Dikunci' },
+      { label: 'Pay Yourself First', nom: pyf,              color: '#0B5C4E', badge: 'emerald', bLabel: 'Dikunci' },
       { label: 'Pengeluaran tetap',  nom: totalFixed,        color: '#378ADD', badge: 'green',  bLabel: 'Wajib' },
       { label: 'Kebutuhan variabel', nom: totalVar,          color: '#1D9E75', badge: 'amber',  bLabel: 'Kebutuhan' },
       { label: 'Dana fleksibel',     nom: Math.max(0, sisa), color: '#BA7517', badge: sisa >= 0 ? 'green' : 'red', bLabel: sisa >= 0 ? 'Surplus' : 'Defisit' },
