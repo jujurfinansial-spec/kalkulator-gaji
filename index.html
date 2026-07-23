@@ -38,6 +38,7 @@
     --blue: #378ADD;
     --teal: #1D9E75;
     --amber-bar: #BA7517;
+    --emerald: #0B5C4E;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -66,6 +67,7 @@
       --coral-light: #4A1B0C;
       --coral-dark: #F5C4B3;
       --coral-border: #993C1D;
+      --emerald: #34D399;
     }
   }
 
@@ -92,10 +94,12 @@
     background: var(--bg);
     border-radius: var(--radius-xl);
     border: 0.5px solid var(--border);
+    border-top: 3px solid var(--emerald);
   }
   .header-eyebrow {
     font-size: 11px;
-    color: var(--text3);
+    color: var(--emerald);
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 10px;
@@ -451,6 +455,7 @@
 
   <div class="footer">
     Tool #1 dari 4 · Dibuat oleh <a href="https://www.youtube.com/@jujurfinansial" target="_blank">Jujur Finansial</a> · Gratis untuk viewers 🙌
+    <br><span style="opacity:.8">🔒 Data kamu cuma tersimpan di browser ini — nggak dikirim atau disimpan di server kami.</span>
   </div>
 
 </div>
@@ -462,6 +467,22 @@
     if (n >= 1e6) return 'Rp\u00a0' + (n/1e6).toFixed(1) + ' jt';
     return fmt(n);
   };
+
+  // === Jujur Finansial: shared data (localStorage, 1 origin dipakai semua tool) ===
+  const JF_KEY = 'jf_data';
+  function jfLoad() {
+    try {
+      const raw = localStorage.getItem(JF_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function jfSave(section, data) {
+    try {
+      const all = jfLoad();
+      all[section] = Object.assign({}, all[section] || {}, data, { updated_at: new Date().toISOString() });
+      localStorage.setItem(JF_KEY, JSON.stringify(all));
+    } catch (e) { /* storage penuh/nonaktif -> tool tetap jalan normal tanpa simpan */ }
+  }
 
   let fixedItems = [
     { label: 'Cicilan rumah / KPR / sewa', val: 1500000 },
@@ -477,6 +498,16 @@
     { label: 'Kebutuhan anak & keluarga', val: 250000 },
     { label: 'Makan di luar / jajan', val: 200000 },
   ];
+
+  function loadSavedInputs() {
+    const g = jfLoad().gaji;
+    if (!g) return; // belum pernah dipakai -> tetap pakai nilai contoh default
+    if (g.gaji_pokok != null) document.getElementById('gaji').value = g.gaji_pokok;
+    if (g.tambahan != null) document.getElementById('tambahan').value = g.tambahan;
+    if (g.pyf_pct != null) document.getElementById('pyf-slider').value = g.pyf_pct;
+    if (Array.isArray(g.fixed_items) && g.fixed_items.length) fixedItems = g.fixed_items;
+    if (Array.isArray(g.var_items) && g.var_items.length) varItems = g.var_items;
+  }
 
   function renderList(items, containerId, type) {
     const c = document.getElementById(containerId);
@@ -534,6 +565,20 @@
     const pyf = Math.round(total * pyfPct / 100);
     const sisa = total - totalSpend - pyf;
     const sisaPct = total > 0 ? Math.round((sisa / total) * 100) : 0;
+
+    // Simpan hasil ke shared storage -> dibaca tool 2, 3, 4 sebagai saran (bukan lock/paksaan)
+    jfSave('gaji', {
+      gaji_pokok: gaji,
+      tambahan: tambahan,
+      total_income: total,
+      pyf_pct: pyfPct,
+      pyf_amount: pyf,
+      total_fixed: totalFixed,
+      total_var: totalVar,
+      sisa: sisa,
+      fixed_items: fixedItems,
+      var_items: varItems
+    });
 
     document.getElementById('m-total').textContent = fmtS(total);
     document.getElementById('m-spend').textContent = fmtS(totalSpend);
@@ -612,6 +657,7 @@
   document.getElementById('gaji').addEventListener('input', update);
   document.getElementById('tambahan').addEventListener('input', update);
 
+  loadSavedInputs();
   render();
   update();
 </script>
